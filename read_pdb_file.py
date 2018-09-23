@@ -44,10 +44,10 @@ def pro_lig_reader():
     num_channels = 4
     grid_resolution = 0.5
     grid_dim = math.floor(grid_size/grid_resolution)
-    grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
 
     training_x = []
     for i in range(len(pro_file_names)):
+        grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
 
         label = pro_file_names[i][:4]
         pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./training_data/' + label + '_pro_cg.pdb')
@@ -92,18 +92,26 @@ def pro_lig_reader():
             grid_3Dx4[math.floor(atom[0]/grid_resolution), math.floor(atom[1]/grid_resolution), math.floor(atom[2]/grid_resolution), channel] = 1
 
         training_x.append(grid_3Dx4)
-        plot_3D(grid_3Dx4)
+        plot_3D(grid_3Dx4,i)
     print("done")
 
 
-def plot_3D(grid_3Dx4):
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+def plot_3D(grid_3Dx4,i):
+    fig = plt.figure(i)
+    #ax = fig.add_subplot(111, projection='3d')
+    ax = plt.axes(projection='3d')
 
     for c, m, grid_3d in zip(['r','r','b','b'],['o','^','o','^'],[grid_3Dx4[:,:,:,0],grid_3Dx4[:, :, :, 1],grid_3Dx4[:,:,:,2],grid_3Dx4[:,:,:,3]]):
-        xs = grid_3d[:, 0, 0]
-        ys = grid_3d[0, :, 0]
-        zs = grid_3d[0, 0, :]
+        xs=[]
+        ys=[]
+        zs=[]
+        for i in range(0, 48):
+            for j in range(0,48):
+                for k in range(0,48):
+                    if grid_3d[i,j,k] == 1:
+                        xs.append(i)
+                        ys.append(j)
+                        zs.append(k)
         ax.scatter(xs, ys, zs, c=c, marker=m)
 
     ax.set_xlabel('X Label')
