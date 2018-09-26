@@ -1,7 +1,6 @@
 from AtomConvNet import *
 from read_pdb_file import *
 import matplotlib.pyplot as plt
-from keras import callbacks
 from DataGenerator import DataGenerator
 import random
 
@@ -9,7 +8,7 @@ grid_size = 24
 num_channels = 4
 grid_resolution = 0.5
 grid_dim = math.floor(grid_size / grid_resolution)
-batch_size = 64
+batch_size = 250
 num_classes = 2
 validation_ratio = 0.2
 
@@ -43,7 +42,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 # Train model on dataset
 print(">>> starting to fit model...")
 history = model.fit_generator(generator=training_generator, validation_data=validation_generator,
-                              use_multiprocessing=True, workers=6, verbose=1, epochs=1)
+                              use_multiprocessing=True, workers=2, verbose=1, epochs=1)
 
 # train_x, train_y = pro_lig_reader_full(grid_size, num_channels, grid_resolution)
 # history = model.fit(x=train_x, y=train_y, batch_size=100, validation_split=0.2, epochs=1, verbose=1)

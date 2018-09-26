@@ -4,7 +4,7 @@ from read_pdb_file import *
 
 class DataGenerator(keras.utils.Sequence):
     #Generates data for Keras
-    def __init__(self, list_IDs, batch_size=500, dim=(48, 48, 48), n_channels=4,
+    def __init__(self, list_IDs, batch_size=48, dim=(48, 48, 48), n_channels=4,
                  n_classes=2, shuffle=True):
         # Initialization
         self.dim = dim

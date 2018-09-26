@@ -93,7 +93,7 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
                 out_of_bound = 0
                 channel = 4
                 for d in atom[:3]:
-                    if 0 > d or d > (grid_size-grid_resolution):
+                    if 0 > d or d >= (grid_size-grid_resolution):
                         out_of_bound = 1
                         break
                 if out_of_bound == 1:
@@ -118,7 +118,6 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
 def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_channels=4, grid_resolution=0.5):
 
     # 3D grid with 0.5A resolution and 24A x 24A x 24A size
-
     grid_dim = math.floor(grid_size/grid_resolution)
 
     grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
@@ -137,7 +136,7 @@ def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_
         out_of_bound = 0
         channel = 4
         for d in atom[:3]:
-            if 0 > d or d > grid_size:
+            if 0 > d or d >= (grid_size-grid_resolution):
                 out_of_bound = 1
                 break
         if out_of_bound == 1:
@@ -154,7 +153,7 @@ def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_
         out_of_bound = 0
         channel = 4
         for d in atom[:3]:
-            if 0 > d or d > grid_size:
+            if 0 > d or d >= (grid_size-grid_resolution):
                 out_of_bound = 1
                 break
         if out_of_bound == 1:
@@ -198,4 +197,4 @@ def plot_3D(grid_3Dx4):
     plt.show()
 
 #pro_lig_reader_full()
-#pro_lig_reader_sample()
+pro_lig_reader_sample()
