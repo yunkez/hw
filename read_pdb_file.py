@@ -197,4 +197,4 @@ def plot_3D(grid_3Dx4):
     plt.show()
 
 #pro_lig_reader_full()
-pro_lig_reader_sample()
+#pro_lig_reader_sample()
