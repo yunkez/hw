@@ -77,7 +77,7 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
                 out_of_bound = 0
                 channel = 4
                 for d in atom[:3]:
-                    if 0 > d or d > grid_size:
+                    if 0 > d or d >= (grid_size-grid_resolution):
                         out_of_bound = 1
                         break
                 if out_of_bound == 1:
@@ -93,7 +93,7 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
                 out_of_bound = 0
                 channel = 4
                 for d in atom[:3]:
-                    if 0 > d or d > grid_size:
+                    if 0 > d or d > (grid_size-grid_resolution):
                         out_of_bound = 1
                         break
                 if out_of_bound == 1:
