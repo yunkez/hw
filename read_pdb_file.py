@@ -40,7 +40,7 @@ def read_pdb(filename):
     return X_list, Y_list, Z_list, atomtype_list
 
 
-def pro_lig_reader(grid_size=24, num_channels=4, grid_resolution=0.5):
+def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
 
     print(">>> loading data...")
     pro_file_names = [os.path.basename(f) for f in sorted(glob.glob("./training_data/*_pro_cg.pdb"))]
@@ -56,13 +56,13 @@ def pro_lig_reader(grid_size=24, num_channels=4, grid_resolution=0.5):
     training_y = []
 
     #for i in tqdm(range(len(pro_file_names))):
-    for i in tqdm(range(10)):
+    for i in tqdm(range(25)):
 
         pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./training_data/' + pro_file_names[i][:4] + '_pro_cg.pdb')
         pro = [pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list]
 
         #for j in range(len(lig_file_names)):
-        for j in range(10):
+        for j in range(25):
 
             grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
             lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./training_data/' + lig_file_names[j][:4] + '_lig_cg.pdb')
@@ -114,6 +114,66 @@ def pro_lig_reader(grid_size=24, num_channels=4, grid_resolution=0.5):
             #plot_3D(grid_3Dx4)
     return np.stack(training_x, 0), to_categorical(training_y)
 
+
+def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_channels=4, grid_resolution=0.5):
+
+    # 3D grid with 0.5A resolution and 24A x 24A x 24A size
+
+    grid_dim = math.floor(grid_size/grid_resolution)
+
+    grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
+
+    pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./training_data/' + pro_label + '_pro_cg.pdb')
+    lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./training_data/' + lig_label + '_lig_cg.pdb')
+    pro = [pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list]
+    lig = [lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list]
+
+    centroid = np.mean(lig[:3], axis=1)
+    centroid = np.reshape(centroid, (3, 1))
+    pro[:3] = np.add(np.subtract(pro[:3], centroid), grid_size/2)
+    lig[:3] = np.add(np.subtract(lig[:3], centroid), grid_size/2)
+
+    for atom in zip(pro[0], pro[1], pro[2], pro[3]):
+        out_of_bound = 0
+        channel = 4
+        for d in atom[:3]:
+            if 0 > d or d > grid_size:
+                out_of_bound = 1
+                break
+        if out_of_bound == 1:
+            continue
+
+        if atom[-1] == 'h':
+            channel = 0
+        if atom[-1] == 'p':
+            channel = 1
+        grid_3Dx4[math.floor(atom[0]/grid_resolution), math.floor(atom[1]/grid_resolution),
+                  math.floor(atom[2]/grid_resolution), channel] = 1
+
+    for atom in zip(lig[0], lig[1], lig[2], lig[3]):
+        out_of_bound = 0
+        channel = 4
+        for d in atom[:3]:
+            if 0 > d or d > grid_size:
+                out_of_bound = 1
+                break
+        if out_of_bound == 1:
+            continue
+
+        if atom[-1] == 'h':
+            channel = 2
+        if atom[-1] == 'p':
+            channel = 3
+        grid_3Dx4[math.floor(atom[0]/grid_resolution), math.floor(atom[1]/grid_resolution),
+                  math.floor(atom[2]/grid_resolution), channel] = 1
+
+    #plot_3D(grid_3Dx4)
+
+    if pro_label == lig_label:
+        return grid_3Dx4, 1
+    else:
+        return grid_3Dx4, 0
+
 def plot_3D(grid_3Dx4):
     #fig = plt.figure()
     ax = plt.axes(projection='3d')
@@ -137,4 +197,5 @@ def plot_3D(grid_3Dx4):
 
     plt.show()
 
-#pro_lig_reader()
+#pro_lig_reader_full()
+#pro_lig_reader_sample()
