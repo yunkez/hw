@@ -3,7 +3,7 @@ import numpy as np
 import os
 import math
 from mpl_toolkits.mplot3d import Axes3D
-import time
+
 from keras.utils import to_categorical
 
 from tqdm import tqdm
