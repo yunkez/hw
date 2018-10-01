@@ -40,11 +40,11 @@ def read_pdb(filename):
     return X_list, Y_list, Z_list, atomtype_list
 
 
-def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
+def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5,folder_name='training_data'):
 
     print(">>> loading data...")
-    pro_file_names = [os.path.basename(f) for f in sorted(glob.glob("./training_data/*_pro_cg.pdb"))]
-    lig_file_names = [os.path.basename(f) for f in sorted(glob.glob("./training_data/*_lig_cg.pdb"))]
+    pro_file_names = [os.path.basename(f) for f in sorted(glob.glob("./" + folder_name + "/*_pro_cg.pdb"))]
+    lig_file_names = [os.path.basename(f) for f in sorted(glob.glob("./" + folder_name + "/*_lig_cg.pdb"))]
 
     # 3D grid with 0.5A resolution and 24A x 24A x 24A size
     # grid_size = grid_size
@@ -58,14 +58,14 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
     #for i in tqdm(range(len(pro_file_names))):
     for i in tqdm(range(25)):
 
-        pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./training_data/' + pro_file_names[i][:4] + '_pro_cg.pdb')
+        pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_file_names[i][:4] + '_pro_cg.pdb')
         pro = [pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list]
 
         #for j in range(len(lig_file_names)):
         for j in range(25):
 
             grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
-            lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./training_data/' + lig_file_names[j][:4] + '_lig_cg.pdb')
+            lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_file_names[j][:4] + '_lig_cg.pdb')
             lig = [lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list]
 
             centroid = np.mean(lig[:3], axis=1)
@@ -115,15 +115,15 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5):
     return np.stack(training_x, 0), to_categorical(training_y)
 
 
-def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_channels=4, grid_resolution=0.5):
+def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_channels=4, grid_resolution=0.5, folder_name='training_data'):
 
     # 3D grid with 0.5A resolution and 24A x 24A x 24A size
     grid_dim = math.floor(grid_size/grid_resolution)
 
     grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
 
-    pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./training_data/' + pro_label + '_pro_cg.pdb')
-    lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./training_data/' + lig_label + '_lig_cg.pdb')
+    pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_label + '_pro_cg.pdb')
+    lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
     pro = [pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list]
     lig = [lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list]
 

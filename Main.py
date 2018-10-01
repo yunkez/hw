@@ -10,6 +10,7 @@ grid_dim = math.floor(grid_size / grid_resolution)
 batch_size = 200
 num_classes = 2
 validation_ratio = 0.2
+t = 1
 
 params = {'grid_size': grid_size,
           'batch_size': batch_size,
@@ -22,6 +23,11 @@ params = {'grid_size': grid_size,
 pro_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_pro_cg.pdb"))]
 lig_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_lig_cg.pdb"))]
 IDs = [(pro_labels[i], lig_labels[j]) for i in range(len(pro_labels)) for j in range(len(lig_labels))]
+
+class_weight = {
+    0: 1.0,
+    1: 1.0 * len(pro_labels)*(len(lig_labels)-1)/len(pro_labels)
+}
 
 print("starting to sample for validation partitions...")
 
@@ -41,26 +47,28 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 
 # Train model on dataset
 print("starting to fit model...")
-history = model.fit_generator(generator=training_generator, validation_data=validation_generator,steps_per_epoch=train_steps,validation_steps=val_steps, use_multiprocessing=True,workers=10,verbose=1, epochs=1)
+history = model.fit_generator(generator=training_generator, validation_data=validation_generator,steps_per_epoch=train_steps,validation_steps=val_steps, use_multiprocessing=True,workers=10,class_weight=class_weight,verbose=1, epochs=1)
 
 model.save('AtomNet.h5')
-print("starting to plot...")
 
-# Plot training & validation accuracy values
-plt.plot(history.history['acc'])
-plt.plot(history.history['val_acc'])
-plt.title('Model accuracy')
-plt.ylabel('Accuracy')
-plt.xlabel('Epoch')
-plt.legend(['Train', 'Test'], loc='upper left')
-plt.show()
 
-# Plot training & validation loss values
-plt.plot(history.history['loss'])
-plt.plot(history.history['val_loss'])
-plt.title('Model loss')
-plt.ylabel('Loss')
-plt.xlabel('Epoch')
-plt.legend(['Train', 'Test'], loc='upper left')
-plt.show()
+#print("starting to plot...")
+
+# # Plot training & validation accuracy values
+# plt.plot(history.history['acc'])
+# plt.plot(history.history['val_acc'])
+# plt.title('Model accuracy')
+# plt.ylabel('Accuracy')
+# plt.xlabel('Epoch')
+# plt.legend(['Train', 'Test'], loc='upper left')
+# plt.show()
+#
+# # Plot training & validation loss values
+# plt.plot(history.history['loss'])
+# plt.plot(history.history['val_loss'])
+# plt.title('Model loss')
+# plt.ylabel('Loss')
+# plt.xlabel('Epoch')
+# plt.legend(['Train', 'Test'], loc='upper left')
+# plt.show()
 
