@@ -2,16 +2,17 @@ from AtomConvNet import *
 from DataGenerator import *
 import random
 import matplotlib.pyplot as plt
+from AUC import *
 
 grid_size = 24
 num_channels = 4
 grid_resolution = 0.5
 grid_dim = math.floor(grid_size / grid_resolution)
-batch_size = 200
+batch_size = 50
 num_classes = 2
-validation_ratio = 0.2
-t = 1
-num_samples = 20
+validation_ratio = 0.1
+num_samples = 10
+num_epochs = 1
 params = {'grid_size': grid_size,
           'batch_size': batch_size,
           'n_classes': num_classes,
@@ -20,14 +21,12 @@ params = {'grid_size': grid_size,
           'shuffle': True}
 
 # Datasets
-# pro_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_pro_cg.pdb"))]
-# lig_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_lig_cg.pdb"))]
-# IDs = [(pro_labels[i], lig_labels[j]) for i in range(len(pro_labels)) for j in range(len(lig_labels))]
+# labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_pro_cg.pdb"))]
+labels = [format(i + 1, '04') for i in range(25)]
 
-pro_labels = [format(i + 1, '04') for i in range(100)]
-lig_labels = [format(i + 1, '04') for i in range(100)]
-IDs = [(pro_labels[i], lig_label) for i in range(len(pro_labels))
-       for lig_label in ([lig_labels[i]]+random.sample(list(set(lig_labels)-set(pro_labels[i])), num_samples-1))]
+val_labels = random.sample(labels, math.floor(validation_ratio * len(labels)))
+train_labels = list(set(labels) - set(val_labels))
+
 
 class_weight = {
     0: 1.0,
@@ -36,10 +35,14 @@ class_weight = {
 
 print("starting to sample for validation partitions...")
 
-train_steps = math.floor((1-validation_ratio) * len(IDs) / batch_size)
-val_steps = math.floor(validation_ratio * len(IDs) / batch_size)
-val_part = [(d[0], d[1]) for d in random.sample(IDs, math.floor(validation_ratio * len(IDs)))]
-train_part = list(set(IDs) - set(val_part))
+train_part = [(train_labels[i], lig_label) for i in range(len(train_labels))
+              for lig_label in ([train_labels[i]]+random.sample(list(set(train_labels)-set(train_labels[i])), num_samples-1))]
+
+val_part = [(val_labels[i], lig_label) for i in range(len(val_labels))
+            for lig_label in ([val_labels[i]]+random.sample(list(set(val_labels)-set(val_labels[i])), num_samples-1))]
+
+train_steps = math.floor(1.0 * len(train_part) / batch_size)
+val_steps = math.floor(1.0 * len(val_part) / batch_size)
 
 # Generators
 print("starting to load data...")
@@ -48,21 +51,22 @@ validation_generator = DataGenerator(val_part, **params)
 
 print("starting to compile model...")
 model = AtomConvNet(input_shape=(grid_dim, grid_dim, grid_dim, num_channels))
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='adam',metrics=[auc])
 
 # Train model on dataset
 print("starting to fit model...")
-history = model.fit_generator(generator=training_generator, validation_data=validation_generator,steps_per_epoch=train_steps,validation_steps=val_steps, use_multiprocessing=True,workers=10,class_weight=class_weight,verbose=1, epochs=1)
+history = model.fit_generator(generator=training_generator, validation_data=validation_generator,
+                              steps_per_epoch=train_steps, validation_steps=val_steps,
+                              use_multiprocessing=True, class_weight=class_weight,
+                              workers=4, verbose=1, epochs=num_epochs)
+model.save('AtomNet_%sx%sx%s.h5' %(len(labels),num_samples,num_epochs))
 
-model.save('AtomNet_100x20.h5')
-
-
-#print("starting to plot...")
-
+print("starting to plot...")
+#
 # # Plot training & validation accuracy values
-# plt.plot(history.history['acc'])
-# plt.plot(history.history['val_acc'])
-# plt.title('Model accuracy')
+# plt.plot(history.history['auc'])
+# plt.plot(history.history['val_auc'])
+# plt.title('Model AUC')
 # plt.ylabel('Accuracy')
 # plt.xlabel('Epoch')
 # plt.legend(['Train', 'Test'], loc='upper left')
