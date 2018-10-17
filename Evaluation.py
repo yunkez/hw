@@ -4,7 +4,7 @@ import glob
 from read_pdb_file import pro_lig_reader_sample
 from AUC import *
 
-model = load_model('AtomNet_2000x10x1.h5',custom_objects={'auc': auc})
+model = load_model('AtomNet_1000x10x1.h5',custom_objects={'auc': auc})
 import numpy as np
 
 def getKey(item):

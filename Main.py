@@ -30,7 +30,7 @@ train_labels = list(set(labels) - set(val_labels))
 
 class_weight = {
     0: 1.0,
-    1: 1.0 * (num_samples-1)
+    1: 1.0 * (num_samples-1) * 2
 }
 
 print("starting to sample for validation partitions...")
