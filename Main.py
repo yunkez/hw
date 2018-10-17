@@ -8,7 +8,7 @@ grid_size = 24
 num_channels = 4
 grid_resolution = 0.5
 grid_dim = math.floor(grid_size / grid_resolution)
-batch_size = 50
+batch_size = 100
 num_classes = 2
 validation_ratio = 0.1
 num_samples = 10
@@ -22,7 +22,7 @@ params = {'grid_size': grid_size,
 
 # Datasets
 # labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_pro_cg.pdb"))]
-labels = [format(i + 1, '04') for i in range(25)]
+labels = [format(i + 1, '04') for i in range(2000)]
 
 val_labels = random.sample(labels, math.floor(validation_ratio * len(labels)))
 train_labels = list(set(labels) - set(val_labels))
@@ -59,10 +59,11 @@ history = model.fit_generator(generator=training_generator, validation_data=vali
                               steps_per_epoch=train_steps, validation_steps=val_steps,
                               use_multiprocessing=True, class_weight=class_weight,
                               workers=4, verbose=1, epochs=num_epochs)
+
 model.save('AtomNet_%sx%sx%s.h5' %(len(labels),num_samples,num_epochs))
 
 print("starting to plot...")
-#
+
 # # Plot training & validation accuracy values
 # plt.plot(history.history['auc'])
 # plt.plot(history.history['val_auc'])

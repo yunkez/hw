@@ -2,7 +2,9 @@ from keras.models import load_model
 import os
 import glob
 from read_pdb_file import pro_lig_reader_sample
-model = load_model('AtomNet_100x10.h5')
+from AUC import *
+
+model = load_model('AtomNet_2000x10x1.h5',custom_objects={'auc': auc})
 import numpy as np
 
 def getKey(item):
@@ -21,8 +23,9 @@ correct = 0
 for pro in pro_labels:
 
     output = {'pro': pro,
-              'predicted_score': [],
-              'found': False}
+              'found': False,
+              'predicted_score': []
+              }
 
     for lig in lig_labels:
         X = np.empty((1, 48, 48, 48,4))
