@@ -2,7 +2,8 @@ from keras.models import load_model
 import os
 import glob
 from read_pdb_file import pro_lig_reader_sample
-from AUC import *
+from auc import *
+from distance import get_possible_lig_for_protein
 
 model = load_model('AtomNet_2000x10x10x1.0_deep.h5',custom_objects={'auc': auc})
 import numpy as np
@@ -27,13 +28,15 @@ for pro in pro_labels:
               'predicted_score': []
               }
 
-    for lig in lig_labels:
+    possible_lig_labels = get_possible_lig_for_protein(pro, lig_labels, max_distance=7, folder_name='test_data')
+
+    for lig in possible_lig_labels:
         X = np.empty((1, 48, 48, 48,4))
-        X[0], y_r = pro_lig_reader_sample(pro_label=pro, lig_label=lig,folder_name='test_data')
+        X[0], y_r = pro_lig_reader_sample(pro_label=pro, lig_label=lig, folder_name='test_data')
         y_p = model.predict(X)
         if y_p[0][1] > 0.5:
             output['predicted_score'].append((lig, y_p[0][1]))
-        output['predicted_score'] = sorted(output['predicted_score'],key=getKey,reverse=True)[:10]
+        output['predicted_score'] = sorted(output['predicted_score'], key=getKey, reverse=True)[:10]
     output['found'] = True if pro in [a[0] for a in output['predicted_score']] else False
     if output['found']: correct += 1
     print(output)
