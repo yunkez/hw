@@ -40,16 +40,16 @@ labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./training_data/*_p
 #                 non_bind_min_d = d_pl
 #                 print("pro = %s, lig = %s, bind_min_dist = %s, non_bind_min_dist = %s\n" % (i, j, bind_max_d,non_bind_min_d))
 
-for i in labels:
-    d_pl = pro_lig_distance(i, i)
-    if d_pl > bind_max_d:
-        bind_max_d = d_pl
-        print("pro = %s, lig = %s, bind_max_dist = %s\n" % (i, i, bind_max_d))
-
-print("bind_max_d = %s" %bind_max_d)
+# for i in labels:
+#     d_pl = pro_lig_distance(i, i)
+#     if d_pl > bind_max_d:
+#         bind_max_d = d_pl
+#         print("pro = %s, lig = %s, bind_max_dist = %s\n" % (i, i, bind_max_d))
+#
+# print("bind_max_d = %s" %bind_max_d)
 #print("non_bind_min_d = %s" %(non_bind_min_d))
 
-
+print(pro_lig_distance('0001','0004'))
 
 
 
