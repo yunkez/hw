@@ -50,19 +50,22 @@ def get_valid_samples(pro_label, lig_labels, num_samples=10, max_distance=7, fol
     pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_label + '_pro_cg.pdb')
     pro = [pro_x_list, pro_y_list, pro_z_list]
 
-    lig_samples = set()
+    random.shuffle(lig_labels)
 
-    while len(lig_samples) < num_samples:
+    lig_samples = []
 
-        lig_label = random.choice(lig_labels)
+    for lig_label in lig_labels:
+
         lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
         lig = [lig_x_list, lig_y_list, lig_z_list]
 
         dist = cal_distance(pro, lig)
         if dist <= max_distance:
-            lig_samples.add(lig_label)
+            lig_samples.append(lig_label)
+            if len(lig_samples) == num_samples:
+                break
 
-    return list(lig_samples)
+    return lig_samples
 
 # samples = ['0512', '0596', '1782', '0743', '1808', '0591', '0368', '1271', '1754']
 # for s in samples:

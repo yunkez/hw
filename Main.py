@@ -41,10 +41,10 @@ print("starting to sample for validation partitions...")
 
 
 train_part = [(train_labels[i], lig_label) for i in range(len(train_labels))
-              for lig_label in get_valid_samples(train_labels[i], list(set(train_labels)-set(train_labels[i])), num_samples-1)]
+              for lig_label in get_valid_samples(train_labels[i], list(set(train_labels)-set([train_labels[i]])), num_samples-1)]
 
 val_part = [(val_labels[i], lig_label) for i in range(len(val_labels))
-            for lig_label in get_valid_samples(val_labels[i], list(set(val_labels)-set(val_labels[i])), num_samples-1)]
+            for lig_label in get_valid_samples(val_labels[i], list(set(val_labels)-set([val_labels[i]])), num_samples-1)]
 
 train_steps = math.floor(1.0 * len(train_part) / batch_size)
 val_steps = math.floor(1.0 * len(val_part) / batch_size)
