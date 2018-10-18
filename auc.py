@@ -6,8 +6,8 @@ import numpy as np
 
 # AUC for a binary classifier
 def auc(y_true, y_pred):
-    ptas = tf.stack([binary_PTA(y_true, y_pred, k) for k in np.linspace(0, 1, 100)],axis=0)
-    pfas = tf.stack([binary_PFA(y_true, y_pred, k) for k in np.linspace(0, 1, 100)],axis=0)
+    ptas = tf.stack([binary_PTA(y_true, y_pred, k) for k in np.linspace(0, 1, 1000)],axis=0)
+    pfas = tf.stack([binary_PFA(y_true, y_pred, k) for k in np.linspace(0, 1, 1000)],axis=0)
     pfas = tf.concat([tf.ones((1,)), pfas],axis=0)
     binSizes = -(pfas[1:]-pfas[:-1])
     s = ptas*binSizes
