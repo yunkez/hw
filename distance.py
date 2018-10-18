@@ -29,7 +29,7 @@ def cal_distance(pro, lig):
     return min_d
 
 
-def get_lig_for_protein(pro_label, lig_labels, max_distance=7, folder_name='training_data'):
+def get_possible_lig_for_protein(pro_label, lig_labels, max_distance=7, folder_name='training_data'):
 
     pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_label + '_pro_cg.pdb')
     pro = [pro_x_list, pro_y_list, pro_z_list]
