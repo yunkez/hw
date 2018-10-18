@@ -2,7 +2,8 @@ from AtomConvNet import *
 from DataGenerator import *
 import random
 import matplotlib.pyplot as plt
-from AUC import *
+from auc import *
+from distance import get_lig_for_protein
 
 grid_size = 24
 num_channels = 4
@@ -36,11 +37,14 @@ class_weight = {
 
 print("starting to sample for validation partitions...")
 
+# for train_label in train_labels:
+
+
 train_part = [(train_labels[i], lig_label) for i in range(len(train_labels))
-              for lig_label in ([train_labels[i]]+random.sample(list(set(train_labels)-set(train_labels[i])), num_samples-1))]
+              for lig_label in ([train_labels[i]]+random.sample(get_lig_for_protein(train_labels[i], list(set(train_labels)-set(train_labels[i]))), num_samples-1))]
 
 val_part = [(val_labels[i], lig_label) for i in range(len(val_labels))
-            for lig_label in ([val_labels[i]]+random.sample(list(set(val_labels)-set(val_labels[i])), num_samples-1))]
+            for lig_label in ([val_labels[i]]+random.sample(get_lig_for_protein(val_labels[i], list(set(val_labels)-set(val_labels[i]))), num_samples-1))]
 
 train_steps = math.floor(1.0 * len(train_part) / batch_size)
 val_steps = math.floor(1.0 * len(val_part) / batch_size)
