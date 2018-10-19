@@ -13,7 +13,7 @@ batch_size = 100
 num_classes = 2
 validation_ratio = 0.1
 num_samples = 20
-num_epochs = 1
+num_epochs = 10
 t = 1.0
 params = {'grid_size': grid_size,
           'batch_size': batch_size,
