@@ -12,7 +12,7 @@ grid_dim = math.floor(grid_size / grid_resolution)
 batch_size = 100
 num_classes = 2
 validation_ratio = 0.1
-num_samples = 20
+num_samples = 10
 num_epochs = 10
 t = 1.0
 params = {'grid_size': grid_size,
@@ -41,9 +41,10 @@ print("starting to sample for validation partitions...")
 
 train_part = [(train_labels[i], lig_label) for i in range(len(train_labels))
               for lig_label in get_valid_samples(train_labels[i], list(set(train_labels)-set([train_labels[i]])), num_samples-1)]
-
+print(train_part)
 val_part = [(val_labels[i], lig_label) for i in range(len(val_labels))
             for lig_label in get_valid_samples(val_labels[i], list(set(val_labels)-set([val_labels[i]])), num_samples-1)]
+print(val_part)
 
 train_steps = math.floor(1.0 * len(train_part) / batch_size)
 val_steps = math.floor(1.0 * len(val_part) / batch_size)

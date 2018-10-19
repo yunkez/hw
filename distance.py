@@ -69,7 +69,8 @@ def get_valid_samples(pro_label, lig_labels, num_samples=10, max_distance=7, fol
             lig_samples.append(lig_label)
             if len(lig_samples) == num_samples:
                 break
-
+    print(pro_label)
+    print(lig_samples)
     return lig_samples
 
 # samples = ['0512', '0596', '1782', '0743', '1808', '0591', '0368', '1271', '1754']
