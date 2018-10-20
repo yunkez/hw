@@ -17,16 +17,21 @@ def cal_distance_by_label(pro_label='0001', lig_label='0001', folder_name='train
     return cal_distance(pro, lig)
 
 
-def cal_distance(pro, lig):
+def cal_distance(pro, lig, max_distance=7):
 
     min_d = float('inf')
+    is_contacted = False
 
     for p in zip(pro[0], pro[1], pro[2]):
         for l in zip(lig[0], lig[1], lig[2]):
             d_pl = np.sqrt(np.power(p[0]-l[0], 2)+np.power(p[1]-l[1], 2)+np.power(p[2]-l[2], 2))
             if d_pl < min_d:
                 min_d = d_pl
-
+            if min_d <= max_distance:
+                is_contacted = True
+                break
+        if is_contacted:
+            break
     return min_d
 
 
@@ -65,7 +70,8 @@ def get_valid_samples(pro_label, lig_labels, num_samples=10, max_distance=7, fol
             lig_samples.append(lig_label)
             if len(lig_samples) == num_samples:
                 break
-
+    print(pro_label)
+    print(lig_samples)
     return lig_samples
 
 # samples = ['0512', '0596', '1782', '0743', '1808', '0591', '0368', '1271', '1754']
