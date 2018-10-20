@@ -4,6 +4,7 @@ import os
 import math
 import random
 from read_pdb_file import *
+import pickle
 
 
 def cal_distance_by_label(pro_label='0001', lig_label='0001', folder_name='training_data'):
@@ -39,9 +40,9 @@ def get_possible_lig_for_protein(pro_label, lig_labels, max_distance=7, folder_n
     for lig_label in lig_labels:
         lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
         lig = [lig_x_list, lig_y_list, lig_z_list]
-
-        if cal_distance(pro, lig) <= max_distance:
-            lig_list.append(lig_label)
+        lig_list.append((lig_label, cal_distance(pro, lig)))
+        # if cal_distance(pro, lig) <= max_distance:
+        #     lig_list.append(lig_label)
 
     return lig_list
 
@@ -98,7 +99,22 @@ def get_valid_samples(pro_label, lig_labels, num_samples=10, max_distance=7, fol
 #print("non_bind_min_d = %s" %(non_bind_min_d))
 
 
+def save_obj(obj, name):
+    with open(name + '.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 
+def load_obj(name):
+    with open(name + '.pkl', 'rb') as f:
+        return pickle.load(f)
 
 
+dic = {}
+for i in range(2000):
+    possible_ligands = get_possible_lig_for_protein(format(i + 1, '04'), [format(j + 1, '04') for j in range(2000)])
+    print(possible_ligands)
+    dic[i] = possible_ligands
+save_obj(dic, 'pro_lig_pairs')
+
+# dic = load_obj('pro_lig_pairs')
+# print(dic)
