@@ -27,11 +27,11 @@ def cal_distance(pro, lig, max_distance=7):
             d_pl = np.sqrt(np.power(p[0]-l[0], 2)+np.power(p[1]-l[1], 2)+np.power(p[2]-l[2], 2))
             if d_pl < min_d:
                 min_d = d_pl
-            if min_d <= max_distance:
-                is_contacted = True
-                break
-        if is_contacted:
-            break
+        #     if min_d <= max_distance:
+        #         is_contacted = True
+        #         break
+        # if is_contacted:
+        #     break
     return min_d
 
 
