@@ -45,9 +45,9 @@ def get_possible_lig_for_protein(pro_label, lig_labels, max_distance=7, folder_n
     for lig_label in lig_labels:
         lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
         lig = [lig_x_list, lig_y_list, lig_z_list]
-        lig_list.append((lig_label, cal_distance(pro, lig)))
-        # if cal_distance(pro, lig) <= max_distance:
-        #     lig_list.append(lig_label)
+        # lig_list.append((lig_label, cal_distance(pro, lig)))
+        if cal_distance(pro, lig) <= max_distance:
+            lig_list.append(lig_label)
 
     return lig_list
 
@@ -115,12 +115,18 @@ def load_obj(name):
         return pickle.load(f)
 
 
-dic = {}
-for i in range(2000):
-    possible_ligands = get_possible_lig_for_protein(format(i + 1, '04'), [format(j + 1, '04') for j in range(2000)])
-    print(possible_ligands)
-    dic[i] = possible_ligands
-save_obj(dic, 'pro_lig_pairs')
+# dic = {}
+# for i in range(2000):
+#     possible_ligands = get_possible_lig_for_protein(format(i + 1, '04'), [format(j + 1, '04') for j in range(2000)])
+#     print(possible_ligands)
+#     dic[i] = possible_ligands
+# save_obj(dic, 'pro_lig_pairs')
+
+
+def get_samples_for_pro(dic, pro, num_samples):
+    ligs = dic[int(pro)-1]
+    ligs_new = list(set(ligs) - set([pro]))
+    return [pro] + random.sample(ligs_new, min(num_samples-1, len(ligs_new)))
 
 # dic = load_obj('pro_lig_pairs')
-# print(dic)
+# print(get_samples_for_pro(dic, '0001', 10))

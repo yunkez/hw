@@ -1,9 +1,8 @@
 from AtomConvNet import *
 from DataGenerator import *
-import random
 import matplotlib.pyplot as plt
 from auc import *
-from distance import get_valid_samples
+from distance import *
 
 grid_size = 24
 num_channels = 4
@@ -13,7 +12,7 @@ batch_size = 100
 num_classes = 2
 validation_ratio = 0.1
 num_samples = 10
-num_epochs = 10
+num_epochs = 5
 t = 1.0
 params = {'grid_size': grid_size,
           'batch_size': batch_size,
@@ -38,13 +37,14 @@ print("starting to sample for validation partitions...")
 
 # for train_label in train_labels:
 
+dic = load_obj('pro_lig_pairs')
 
 train_part = [(train_labels[i], lig_label) for i in range(len(train_labels))
-              for lig_label in get_valid_samples(train_labels[i], list(set(train_labels)-set([train_labels[i]])), num_samples-1)]
-print(train_part)
+              for lig_label in get_samples_for_pro(dic, train_labels[i], num_samples-1)]
+print(len(train_part))
 val_part = [(val_labels[i], lig_label) for i in range(len(val_labels))
-            for lig_label in get_valid_samples(val_labels[i], list(set(val_labels)-set([val_labels[i]])), num_samples-1)]
-print(val_part)
+            for lig_label in get_samples_for_pro(dic, val_labels[i], num_samples-1)]
+print(len(val_part))
 
 train_steps = math.floor(1.0 * len(train_part) / batch_size)
 val_steps = math.floor(1.0 * len(val_part) / batch_size)
