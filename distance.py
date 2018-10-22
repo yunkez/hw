@@ -27,9 +27,9 @@ def cal_distance(pro, lig, max_distance=7):
             d_pl = np.sqrt(np.power(p[0]-l[0], 2)+np.power(p[1]-l[1], 2)+np.power(p[2]-l[2], 2))
             if d_pl < min_d:
                 min_d = d_pl
-        #     if min_d <= max_distance:
-        #         is_contacted = True
-        #         break
+            if min_d <= max_distance:
+                is_contacted = True
+                break
         # if is_contacted:
         #     break
     return min_d
@@ -116,11 +116,11 @@ def load_obj(name):
 
 
 # dic = {}
-# for i in range(2000):
-#     possible_ligands = get_possible_lig_for_protein(format(i + 1, '04'), [format(j + 1, '04') for j in range(2000)])
+# for i in range(2000, 3000):
+#     possible_ligands = get_possible_lig_for_protein(format(i + 1, '04'), [format(j + 1, '04') for j in range(2000, 3000)])
 #     print(possible_ligands)
 #     dic[i] = possible_ligands
-# save_obj(dic, 'pro_lig_pairs')
+# save_obj(dic, 'pro_lig_pairs_test')
 
 
 def get_samples_for_pro(dic, pro, num_samples):
@@ -128,5 +128,9 @@ def get_samples_for_pro(dic, pro, num_samples):
     ligs_new = list(set(ligs) - set([pro]))
     return [pro] + random.sample(ligs_new, min(num_samples-1, len(ligs_new)))
 
-# dic = load_obj('pro_lig_pairs')
-# print(get_samples_for_pro(dic, '0001', 10))
+def get_possible_ligs_for_pro_from_dic(dic, pro):
+    ligs = dic[int(pro)-1]
+    return ligs
+
+# dic = load_obj('pro_lig_pairs_test')
+# print(get_possible_ligs_for_pro_from_dic(dic, '2001'))

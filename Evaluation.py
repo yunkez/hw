@@ -5,11 +5,13 @@ from read_pdb_file import pro_lig_reader_sample
 from auc import *
 from distance import *
 
-model = load_model('AtomNet_2000x10x10x1.0_deep.h5',custom_objects={'auc': auc})
+model = load_model('AtomNet_2000x10x5x1.0.h5', custom_objects={'auc': auc})
 import numpy as np
 
 def getKey(item):
     return item[1]
+
+dic = load_obj('pro_lig_pairs_test')
 
 pro_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./test_data/*_pro_cg.pdb"))]
 lig_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./test_data/*_lig_cg.pdb"))]
@@ -28,7 +30,7 @@ for pro in pro_labels:
               'predicted_score': []
               }
 
-    possible_lig_labels = get_possible_lig_for_protein(pro, lig_labels, max_distance=7, folder_name='test_data')
+    possible_lig_labels = get_possible_ligs_for_pro_from_dic(dic, pro)
     print('%s: %s' % (pro, possible_lig_labels))
 
     for lig in possible_lig_labels:
