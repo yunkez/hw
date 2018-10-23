@@ -5,6 +5,10 @@ from read_pdb_file import pro_lig_reader_sample
 from auc import *
 from distance import *
 
+grid_size = 24
+grid_resolution = 0.5
+grid_dim = math.floor(grid_size / grid_resolution)
+
 model = load_model('AtomNet_2000x10x5x1.0.h5', custom_objects={'auc': auc})
 import numpy as np
 
@@ -34,7 +38,7 @@ for pro in pro_labels:
     print('%s: %s' % (pro, possible_lig_labels))
 
     for lig in possible_lig_labels:
-        X = np.empty((1, 48, 48, 48,4))
+        X = np.empty((1, grid_dim, grid_dim, grid_dim,4))
         X[0], y_r = pro_lig_reader_sample(pro_label=pro, lig_label=lig, folder_name='test_data')
         y_p = model.predict(X)
         output['predicted_score'].append((lig, y_p[0][1]))
