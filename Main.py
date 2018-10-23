@@ -12,7 +12,7 @@ batch_size = 100
 num_classes = 2
 validation_ratio = 0.1
 num_samples = 10
-num_epochs = 5
+num_epochs = 10
 t = 1.0
 params = {'grid_size': grid_size,
           'batch_size': batch_size,
@@ -65,7 +65,7 @@ history = model.fit_generator(generator=training_generator, validation_data=vali
                               use_multiprocessing=True, class_weight=class_weight,
                               workers=4, verbose=1, epochs=num_epochs)
 
-model.save('AtomNet_%sx%sx%sx%s.h5' %(len(labels),num_samples,num_epochs,t))
+model.save('AtomNet_%sx%sx%sx%s%s%s.h5' %(len(labels),num_samples,num_epochs,t,grid_size,grid_resolution))
 
 print("starting to plot...")
 
