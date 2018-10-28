@@ -40,7 +40,30 @@ def read_pdb(filename):
     return X_list, Y_list, Z_list, atomtype_list
 
 
-def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5,folder_name='training_data'):
+def read_pdb_test(filename):
+    with open(filename, 'r') as file:
+        strline_L = file.readlines()
+    # print(strline_L)
+
+    X_list = list()
+    Y_list = list()
+    Z_list = list()
+    atomtype_list = list()
+    for strline in strline_L:
+        # removes all whitespace at the start and end, including spaces, tabs, newlines and carriage returns
+        stripped_line = strline.strip()
+        # print(stripped_line)
+
+        splitted_line = stripped_line.split('\t')
+
+        X_list.append(float(splitted_line[0]))
+        Y_list.append(float(splitted_line[1]))
+        Z_list.append(float(splitted_line[2]))
+        atomtype_list.append(str(splitted_line[3]))
+
+    return X_list, Y_list, Z_list, atomtype_list
+
+def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5,folder_name='training_data', test=False):
 
     print(">>> loading data...")
     pro_file_names = [os.path.basename(f) for f in sorted(glob.glob("./" + folder_name + "/*_pro_cg.pdb"))]
@@ -57,15 +80,20 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5,folder
 
     #for i in tqdm(range(len(pro_file_names))):
     for i in tqdm(range(25)):
-
-        pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_file_names[i][:4] + '_pro_cg.pdb')
+        if test:
+            pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb_test('./' + folder_name + '/' + pro_file_names[i][:4] + '_pro_cg.pdb')
+        else:
+            pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_file_names[i][:4] + '_pro_cg.pdb')
         pro = [pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list]
 
         #for j in range(len(lig_file_names)):
         for j in range(25):
 
             grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
-            lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_file_names[j][:4] + '_lig_cg.pdb')
+            if test:
+                lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb_test('./' + folder_name + '/' + lig_file_names[j][:4] + '_lig_cg.pdb')
+            else:
+                lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_file_names[j][:4] + '_lig_cg.pdb')
             lig = [lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list]
 
             centroid = np.mean(lig[:3], axis=1)
@@ -115,15 +143,19 @@ def pro_lig_reader_full(grid_size=24, num_channels=4, grid_resolution=0.5,folder
     return np.stack(training_x, 0), to_categorical(training_y)
 
 
-def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_channels=4, grid_resolution=0.5, folder_name='training_data'):
+def pro_lig_reader_sample(pro_label='0001', lig_label='0001', grid_size=24, num_channels=4, grid_resolution=0.5, folder_name='training_data', test=False):
 
     # 3D grid with 0.5A resolution and 24A x 24A x 24A size
     grid_dim = math.floor(grid_size/grid_resolution)
 
     grid_3Dx4 = np.zeros((grid_dim, grid_dim, grid_dim, num_channels))
 
-    pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_label + '_pro_cg.pdb')
-    lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
+    if test:
+        pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb_test('./' + folder_name + '/' + pro_label + '_pro_cg.pdb')
+        lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb_test('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
+    else:
+        pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list = read_pdb('./' + folder_name + '/' + pro_label + '_pro_cg.pdb')
+        lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list = read_pdb('./' + folder_name + '/' + lig_label + '_lig_cg.pdb')
     pro = [pro_x_list, pro_y_list, pro_z_list, pro_atomtype_list]
     lig = [lig_x_list, lig_y_list, lig_z_list, lig_atomtype_list]
 
