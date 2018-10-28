@@ -10,6 +10,7 @@ def getKey(item):
 
 dic = load_obj('pro_lig_pairs_test')
 
+#pro_labels = ['0030', '0035', '0038', '0052', '0057', '0063', '0067', '0090', '0105', '0111', '0117', '0118', '0124', '0157', '0162', '0184', '0194', '0246', '0267', '0295', '0306', '0307', '0310', '0314', '0344', '0358', '0406', '0412', '0438', '0444', '0449', '0467', '0487', '0504', '0520', '0564', '0570', '0574', '0599', '0601', '0605', '0616', '0638', '0639', '0654', '0666', '0684', '0706', '0722', '0725', '0753', '0754', '0812', '0815', '0821', '0824']
 pro_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./testing_data_release/*_pro_cg.pdb"))]
 lig_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./testing_data_release/*_lig_cg.pdb"))]
 IDs = [(pro_labels[i], lig_labels[j]) for i in range(len(pro_labels)) for j in range(len(lig_labels))]
@@ -22,6 +23,7 @@ for pro in pro_labels:
               }
 
     possible_lig_labels = get_possible_ligs_for_pro_from_dic(dic, pro)
+    #possible_lig_labels = lig_labels
     print('%s: %s' % (pro, possible_lig_labels))
 
     for lig in possible_lig_labels:
@@ -45,5 +47,3 @@ with open('test_predictions.txt', 'w') as f:
         row = [int(pro)] + [int(i[0]) for i in score_dic[pro]]
         s = '\t'.join([str(x) for x in row])
         f.write(s + '\n')
-
-### pro_list = ['0030', '0035', '0038', '0052', '0057', '0063', '0067', '0090', '0105', '0111', '0117', '0118', '0124', '0157', '0162', '0184', '0194', '0246', '0267', '0295', '0306', '0307', '0310', '0314', '0344', '0358', '0406', '0412', '0438', '0444', '0449', '0467', '0487', '0504', '0520', '0564', '0570', '0574', '0599', '0601', '0605', '0616', '0638', '0639', '0654', '0666', '0684', '0706', '0722', '0725', '0753', '0754', '0812', '0815', '0821', '0824']
