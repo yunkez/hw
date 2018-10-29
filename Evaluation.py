@@ -1,6 +1,6 @@
 from keras.models import load_model
-from auc import *
-from distance import *
+from AUC import *
+from DistanceUtil import *
 import numpy as np
 
 def getKey(item):

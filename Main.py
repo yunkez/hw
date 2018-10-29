@@ -1,8 +1,8 @@
 from AtomConvNet import *
 from DataGenerator import *
 import matplotlib.pyplot as plt
-from auc import *
-from distance import *
+from AUC import *
+from DistanceUtil import *
 
 grid_size = 24
 num_channels = 4
