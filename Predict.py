@@ -1,12 +1,12 @@
 from keras.models import load_model
 from auc import *
 from distance import *
-
-model = load_model('AtomNet_2000x10x5x1.0.h5', custom_objects={'auc': auc})
 import numpy as np
 
 def getKey(item):
     return item[1]
+
+model = load_model('AtomNet_2000x10x5x1.0.h5', custom_objects={'auc': auc})
 
 dic = load_obj('pro_lig_pairs_test')
 

@@ -1,30 +1,22 @@
 from keras.models import load_model
-import os
-import glob
-from read_pdb_file import pro_lig_reader_sample
 from auc import *
 from distance import *
+import numpy as np
+
+def getKey(item):
+    return item[1]
 
 grid_size = 24
 grid_resolution = 0.5
 grid_dim = math.floor(grid_size / grid_resolution)
 
 model = load_model('AtomNet_3000x10x10x1.0x24x0.5.h5', custom_objects={'auc': auc})
-import numpy as np
 
-def getKey(item):
-    return item[1]
-
-dic = load_obj('pro_lig_pairs_23')
+dic = load_obj('pro_lig_pairs_eval')
 
 pro_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./test_data/*_pro_cg.pdb"))]
 lig_labels = [os.path.basename(f)[:4] for f in sorted(glob.glob("./test_data/*_lig_cg.pdb"))]
 IDs = [(pro_labels[i], lig_labels[j]) for i in range(len(pro_labels)) for j in range(len(lig_labels))]
-
-# X = np.empty((1, 48, 48, 48,4))
-# X[0], y_r = pro_lig_reader_sample(pro_label='2901', lig_label='2902',folder_name='test_data')
-# y_p = model.predict(X)
-# print(y_p)
 
 correct = 0
 for pro in pro_labels:
@@ -49,4 +41,4 @@ for pro in pro_labels:
 
 print("accuracy: %s" % (correct / len(pro_labels) * 1.0))
 print("done")
-#
+
